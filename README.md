@@ -53,6 +53,9 @@ now --static --public
 delete the `.map` files on both `build/static/js` and `build/static/css`
 and try again.
 
+### Preview
+![image](https://user-images.githubusercontent.com/157240/43226534-8c8966ae-9032-11e8-9580-79381b0202e7.png)
+
 ## The Story
 No matter your seniority, nor the seniority of your project manager, if you
 are in any project where you have some sort of:
