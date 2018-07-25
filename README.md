@@ -21,6 +21,33 @@ yarn start
 
 By default the app should be running on http://localhost:3000
 
+Use the _redish_ cloud button to open an Excel file. The app will:
+  1. read only the first sheet of your workbook (xls[x])
+  1. use the first row as column names
+  1. look for an `address` column
+  1. add (if not existing) 2 columns: `lat` and `lon`
+  1. show a table with columns:
+    2. numbered row starting at 1 (column header's row doesn't count)
+    2. original `address` column
+    2. empty/existing `lat` column
+    2. empty/existing `lon` column
+
+If everything goes well you should be able to click on each row _location_ icon
+to perform a geocoding request.
+
+**Note:** if geocoding request succeeds, only the first result is used.
+
+If you want to perform a bulk geocode (geocode all the entries in the table)
+you'll need to provide a valid Google Maps API key on the app bar and save it
+using the _disk_ icon. Once you do this the app will store the API key on
+you localStorage and will pick it up every time it is ran. Save an empty key to
+_delete_ it the stored key.
+
+Finally you can export the resulting table back to a .xlsx file. Just click on
+_save_ icon on top of the table. The file will be saved with a `_geocoded` suffix.
+
+Have fun.
+
 ### Custom region
 
 The app is defaulted to work on Argentina (AR) region, to use a different one
@@ -109,6 +136,7 @@ rejections.
 
 Geocoding region is defaulted to Argentina (AR), buy you can tweak it to your needs.
 
+The overall _responsiveness_ could be improved, it doesn't play well under 900px wide.
 ------------------
 
 Any instruction on the original readme is applicable here:
