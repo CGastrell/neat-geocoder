@@ -32,7 +32,8 @@ const styles = theme => ({
     maxHeight: '100%'
   },
   cardHeader: {
-    alignItems: 'unset'
+    alignItems: 'unset',
+    flexShring: 0
   },
   cardContent: {
     height: '500px'
