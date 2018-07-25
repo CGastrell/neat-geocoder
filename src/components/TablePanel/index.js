@@ -70,12 +70,6 @@ const styles = theme => ({
   }
 })
 
-/* generate an array of column objects */
-// const make_cols = refstr => {
-//   let o = [], C = XLSX.utils.decode_range(refstr).e.c + 1
-//   for (var i = 0; i < C; ++i) o[i] = {name: XLSX.utils.encode_col(i), key: i}
-//   return o
-// }
 const geocoderColumns = col => ['address', 'lat', 'lon'].indexOf(col.name) !== -1
 const defaultState = {
   // expanded: false,
@@ -331,7 +325,7 @@ class TablePanel extends React.PureComponent {
           <CardHeader
             className={classnames(classes.cardHeader)}
             avatar={
-              <Avatar aria-label="Recipe" className={classnames(classes.avatar, !this.state.name && classes.hidden)}>
+              <Avatar aria-label="File" className={classnames(classes.avatar, !this.state.name && classes.hidden)}>
                 {this.state.name.substr(0, 1)}
               </Avatar>
             }
@@ -432,6 +426,11 @@ class TablePanel extends React.PureComponent {
 
 TablePanel.propTypes = {
   classes: PropTypes.object.isRequired,
+  apiKey: PropTypes.string,
+  geocoding: PropTypes.bool,
+  handleGeocode: PropTypes.func.isRequired,
+  handleMegaGeocode: PropTypes.func.isRequired,
+  handleZoomToGeom: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(TablePanel)

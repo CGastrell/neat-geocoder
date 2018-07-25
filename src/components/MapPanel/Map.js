@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import 'leaflet/dist/leaflet.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
 import L from 'leaflet'
@@ -35,6 +36,11 @@ class MapPanel extends React.PureComponent {
       </Map>
     )
   }
+}
+
+MapPanel.propTypes = {
+  markers: PropTypes.object.isRequired,
+  mapParams: PropTypes.object.isRequired
 }
 
 export default MapPanel

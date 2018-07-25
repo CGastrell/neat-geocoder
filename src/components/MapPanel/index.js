@@ -83,7 +83,7 @@ class MapPanel extends React.PureComponent {
             //   </React.Fragment>
             // }
             title={`Map`}
-            subheader={`Results`}
+            // subheader={`Results`}
           />
           <CardContent className={classes.cardContent}>
             <LeMap mapParams={this.props.mapParams} markers={this.props.markers} />
@@ -104,6 +104,8 @@ class MapPanel extends React.PureComponent {
 
 MapPanel.propTypes = {
   classes: PropTypes.object.isRequired,
+  mapParams: PropTypes.object.isRequired,
+  markers: PropTypes.object.isRequired
 }
 
 export default withStyles(styles)(MapPanel)

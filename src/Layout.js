@@ -1,8 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import Grid from '@material-ui/core/Grid'
 import TablePanel from './components/TablePanel'
 import { withStyles } from '@material-ui/core/styles'
-// import Paper from '@material-ui/core/Paper'
+
 import MapPanel from './components/MapPanel'
 const styles = theme => {
   // console.log(theme)
@@ -17,7 +18,6 @@ const styles = theme => {
       bottom: 0,
       left: 0,
       right: 0,
-      // padding: theme.spacing.unit * 2,
       overflow: 'auto',
       display: 'flex'
     },
@@ -57,7 +57,6 @@ const Layout = props => {
                 handleZoomToGeom={props.handleZoomToGeom}
                 className={props.classes.paper}
               />
-              {/* <Paper className={props.classes.paper}> </Paper> */}
             </Grid>
             <Grid item xs={6}>
               <MapPanel
@@ -65,8 +64,6 @@ const Layout = props => {
                 mapParams={props.mapParams}
                 className={props.classes.paper}
                 markers={props.markers} />
-              {/* <Paper className={props.classes.paper}>
-              </Paper> */}
             </Grid>
           </Grid>
         </div>
@@ -75,4 +72,14 @@ const Layout = props => {
   )
 }
 
+Layout.propTypes = {
+  classes: PropTypes.object.isRequired,
+  apiKey: PropTypes.string.isRequired,
+  geocoding: PropTypes.bool.isRequired,
+  handleGeocode: PropTypes.func.isRequired,
+  handleMegaGeocode: PropTypes.func.isRequired,
+  handleZoomToGeom: PropTypes.func.isRequired,
+  mapParams: PropTypes.object.isRequired,
+  markers: PropTypes.object.isRequired
+}
 export default withStyles(styles)(Layout)

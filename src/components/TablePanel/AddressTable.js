@@ -13,35 +13,11 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 const styles = theme => ({
   root: {
     width: '100%',
-    // marginTop: theme.spacing.unit * 3,
-    // overflowX: 'auto',
   },
   table: {
-    // minWidth: 700,
   }
 })
 class AddressRow extends React.PureComponent {
-  // constructor (props) {
-  //   super (props)
-  //   this.state = {
-  //     isFetching: false
-  //   }
-  //   this.handleClick = this.handleClick.bind(this)
-  // }
-  // handleClick (event) {
-  //   this.setState({
-  //     isFetching: true
-  //   })
-  //   this.props.geocode(this.props.row)
-  //     .then(json => {
-  //       console.log(json)
-  //     })
-  //     .catch(err => err)
-  //     .then(nomatter => {
-  //       console.log(nomatter)
-  //       this.setState({isFetching: false})
-  //     })
-  // }
   render () {
     return (
       <TableRow>
@@ -115,6 +91,8 @@ class OutTable extends React.Component {
 
 OutTable.propTypes = {
   classes: PropTypes.object.isRequired,
+  cols: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired
 }
 
 export default withStyles(styles)(OutTable)
