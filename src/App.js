@@ -101,6 +101,7 @@ class App extends React.PureComponent {
       <div className="App">
         <AppBar setKey={this.setKey} />
         <Layout
+          region={this.props.region || 'ar'}
           apiKey={this.state.key}
           geocoding={this.state.geocoding}
           handleZoomToGeom={this.handleZoomToGeom}

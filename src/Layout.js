@@ -51,6 +51,7 @@ const Layout = props => {
             <Grid item xs={6}>
               <TablePanel
                 apiKey={props.apiKey}
+                region={props.region}
                 geocoding={props.geocoding}
                 handleGeocode={props.handleGeocode}
                 handleMegaGeocode={props.handleMegaGeocode}

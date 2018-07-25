@@ -279,7 +279,7 @@ class TablePanel extends React.PureComponent {
         processedRows++
 
         const urlParams = {
-          region: 'ar',
+          region: this.props.region,
           key: this.props.apiKey,
           address: row.address
         }
@@ -431,6 +431,7 @@ TablePanel.propTypes = {
   handleGeocode: PropTypes.func.isRequired,
   handleMegaGeocode: PropTypes.func.isRequired,
   handleZoomToGeom: PropTypes.func.isRequired,
+  region: PropTypes.string.isRequired
 }
 
 export default withStyles(styles)(TablePanel)
