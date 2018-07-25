@@ -1,6 +1,14 @@
 Neat Geocoder
 
 ----------------
+
+## The Setup
+You'll need `yarn` installed and working. Obviously this requires a `node`
+version (at the time of this README) 8+, Google can help you getting up and
+running with these two.
+
+A little knowledge on React is also a must.
+
 ## The instructions
 
 Clone the repo, run it locally:
