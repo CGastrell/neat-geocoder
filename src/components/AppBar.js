@@ -12,7 +12,6 @@ import Input from '@material-ui/core/Input'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import classNames from 'classnames'
-import localForage from 'localforage'
 
 const styles = {
   root: {
@@ -41,16 +40,18 @@ class TopBar extends React.PureComponent {
     this.handleKeyChange = this.handleKeyChange.bind(this)
   }
   componentDidMount () {
-    localForage.getItem('gmapiKey')
-      .then(key => {
-        if (key) {
-          this.setState({key})
-          this.props.setKey(key)
-        }
-      })
+    if (window && window.localStorage) {
+      let key = window.localStorage.getItem('gmapiKey')
+      if (key) {
+        this.setState({key})
+        this.props.setKey(key)
+      }
+    }
   }
   handleKeySave (event) {
-    localForage.setItem('gmapiKey', this.state.key)
+    if (window && window.localStorage) {
+      window.localStorage.setItem('gmapiKey', this.state.key)
+    }
     this.props.setKey(this.state.key)
   }
   handleKeyChange (event) {

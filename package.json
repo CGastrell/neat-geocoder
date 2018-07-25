@@ -1,12 +1,11 @@
 {
-  "name": "geocoder",
+  "name": "neat-geocoder",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^1.4.0",
     "@material-ui/icons": "^1.1.0",
     "leaflet": "^1.3.3",
-    "localforage": "^1.7.2",
     "nprogress": "^0.2.0",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
