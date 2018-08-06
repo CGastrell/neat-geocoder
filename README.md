@@ -27,10 +27,10 @@ Use the _redish_ cloud button to open an Excel file. The app will:
   3. look for an `address` column
   4. add (if not existing) 2 columns: `lat` and `lon`
   5. show a table with columns:
-    1. numbered row starting at 1 (column header's row doesn't count)
-    2. original `address` column
-    3. empty/existing `lat` column
-    4. empty/existing `lon` column
+     1. numbered row starting at 1 (column header's row doesn't count)
+     2. original `address` column
+     3. empty/existing `lat` column
+     4. empty/existing `lon` column
 
 If everything goes well you should be able to click on each row _location_ icon
 to perform a geocoding request.
