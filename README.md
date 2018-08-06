@@ -23,14 +23,14 @@ By default the app should be running on http://localhost:3000
 
 Use the _redish_ cloud button to open an Excel file. The app will:
   1. read only the first sheet of your workbook (xls[x])
-  1. use the first row as column names
-  1. look for an `address` column
-  1. add (if not existing) 2 columns: `lat` and `lon`
-  1. show a table with columns:
-    2. numbered row starting at 1 (column header's row doesn't count)
+  2. use the first row as column names
+  3. look for an `address` column
+  4. add (if not existing) 2 columns: `lat` and `lon`
+  5. show a table with columns:
+    1. numbered row starting at 1 (column header's row doesn't count)
     2. original `address` column
-    2. empty/existing `lat` column
-    2. empty/existing `lon` column
+    3. empty/existing `lat` column
+    4. empty/existing `lon` column
 
 If everything goes well you should be able to click on each row _location_ icon
 to perform a geocoding request.
@@ -137,6 +137,7 @@ rejections.
 Geocoding region is defaulted to Argentina (AR), buy you can tweak it to your needs.
 
 The overall _responsiveness_ could be improved, it doesn't play well under 900px wide.
+
 ------------------
 
 Any instruction on the original readme is applicable here:
