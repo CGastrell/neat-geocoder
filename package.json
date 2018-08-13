@@ -2,10 +2,11 @@
   "name": "neat-geocoder",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://cgastrell.github.com/neat-geocoder",
+  "homepage": "https://cgastrell.github.io/neat-geocoder",
   "dependencies": {
     "@material-ui/core": "^1.4.0",
     "@material-ui/icons": "^1.1.0",
+    "gh-pages": "^1.2.0",
     "leaflet": "^1.3.3",
     "nprogress": "^0.2.0",
     "react": "^16.4.1",
@@ -19,6 +20,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "deploy-to-github": "npm run build && git add build && git commit -m 'deploy dist update' && git push origin `git subtree split --prefix build master`:gh-pages --force"
   }
 }
