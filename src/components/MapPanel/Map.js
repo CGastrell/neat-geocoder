@@ -29,7 +29,6 @@ class MapPanel extends React.PureComponent {
   }
   handleDragEnd (rowIndex) {
     return event => {
-      console.log(event.target, rowIndex)
       const geom = {
         location: {
           lat: event.target._latlng.lat,

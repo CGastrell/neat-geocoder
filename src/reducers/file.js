@@ -45,7 +45,7 @@ export default (state = defaultState.file, action) => {
       }
     case GEOCODE_RECEIVE:
       let newData;
-      if (action.rowIndex) {
+      if (!action.row) {
         // by index, comes from marker drag
         newData = [...state.data]
         newData[action.rowIndex].lat = Number(action.geom.location.lat).toFixed(6)
