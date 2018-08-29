@@ -27,6 +27,8 @@ import DeleteIcon from '@material-ui/icons/Clear'
 import GeocoderIcon from '@material-ui/icons/Map'
 import Tooltip from '@material-ui/core/Tooltip'
 // import Zoom from '@material-ui/core/Zoom'
+import { connect } from 'react-redux'
+import { setFile } from '../../actions/file'
 
 const styles = theme => ({
   root: {
@@ -72,16 +74,6 @@ const styles = theme => ({
 })
 
 const geocoderColumns = col => ['address', 'lat', 'lon'].indexOf(col.name) !== -1
-const defaultState = {
-  // expanded: false,
-  // anchorEl: null,
-  name: '',
-  lastUpdate: '',
-  size: 0,
-  sheetName: '',
-  data: [], /* Array of Arrays e.g. [["a","b"],[1,2]] */
-  cols: []  /* Array of column objects e.g. { name: "C", K: 2 } */
-}
 const sortOnRowNum = (a, b) => {
   if (a.__rowNum__ < b.__rowNum__) {
     return -1
@@ -95,63 +87,15 @@ const serialize = obj => Object.keys(obj).map(i => `${i}=${obj[i]}`).join('&')
 class TablePanel extends React.PureComponent {
   constructor (props) {
     super(props)
-    this.state = {...defaultState}
+    // this.state = {...defaultState}
     this.openFileDialog = this.openFileDialog.bind(this)
     this.handleFileOpen = this.handleFileOpen.bind(this)
     this.handleFileSave = this.handleFileSave.bind(this)
     this.handleReset = this.handleReset.bind(this)
-    this.geocodeRow = this.geocodeRow.bind(this)
     this.handleMegaGeocoder = this.handleMegaGeocoder.bind(this)
   }
-  updateRow (row, meta) {
-    console.log(meta)
-    const data = this.state.data.map(r => {
-      if (r.__rowNum__ === row.__rowNum__) {
-        r.isFetching = false
-        if (meta.status === 'OK' && meta.results[0]) {
-          r.lat = Number(meta.results[0].geometry.location.lat).toFixed(6)
-          r.lon = Number(meta.results[0].geometry.location.lng).toFixed(6)
-        }
-      }
-      return r
-    })
-    .sort(sortOnRowNum)
-    this.setState({data})
-    if (meta.status === 'OK' && meta.results[0]) {
-      return meta.results[0].geometry
-    }
-    return null
-  }
-  geocodeRow (row) {
-    if (row.isFetching) {
-      return
-    }
-    const urlParams = {
-      region: 'ar',
-      key: this.props.apiKey,
-      address: row.address
-    }
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?${serialize(urlParams)}`
-
-    const data = this.state.data.map(r => {
-      if (r.__rowNum__ === row.__rowNum__) {
-        r.isFetching = true
-      }
-      return r
-    })
-    this.setState({data})
-    fetch(url)
-      .then(response => response.json())
-      .then(json => this.updateRow(row, json))
-      .then(geom => {
-        if (geom) {
-          this.props.handleGeocode(row, geom)
-          this.props.handleZoomToGeom(geom)
-        }
-      })
-      .catch(err => {
-        this.updateRow(row, err)
-      })
+  openFileDialog (event) {
+    this.refs.fileUploader.click()
   }
   handleFileOpen (event) {
     var file = event.target.files[0];
@@ -190,7 +134,9 @@ class TablePanel extends React.PureComponent {
       const cols = trueCols.map((col, idx) => ({key: idx + 1, name: col}))
       // add fetching marker to all rows
       const superData = data.map(row => {
+        row.hadError = false
         row.isFetching = false
+        // normalize lat/lon columns
         if (!row.lat) {
           row.lat = null
         }
@@ -202,7 +148,7 @@ class TablePanel extends React.PureComponent {
       .sort(sortOnRowNum)
 
       /* Update state */
-      this.setState({
+      this.props.setFileData({
         data: superData,
         cols,
         name: file.name,
@@ -222,16 +168,17 @@ class TablePanel extends React.PureComponent {
     event.target.value = event.target.defaultValue
   }
   handleFileSave (event) {
+    const {file} = this.props
     // remove utility columns
-    const data = this.state.data.map(row => {
-      let { isFetching, ...trueRow } = row
+    const data = file.data.map(row => {
+      let { isFetching, hadError, ...trueRow } = row
       return trueRow
     })
 
     var wb = XLSX.utils.book_new()
     var ws = XLSX.utils.json_to_sheet(data)
-    XLSX.utils.book_append_sheet(wb, ws, this.state.sheetName)
-    let filename = this.state.name || 'workbook.xlsx'
+    XLSX.utils.book_append_sheet(wb, ws, file.sheetName)
+    let filename = file.name || 'workbook.xlsx'
     const filenameParts = filename.split('.')
     if (filenameParts.length > 1) {
       filenameParts.pop() // remove extension
@@ -245,10 +192,7 @@ class TablePanel extends React.PureComponent {
     XLSX.writeFile(wb, filename)
   }
   handleReset (event) {
-    this.setState(defaultState)
-  }
-  handleSampleDownload (event) {
-
+    this.props.setFileData()
   }
   // handleExpandClick = () => {
   //   this.setState(state => ({ expanded: !state.expanded }))
@@ -312,15 +256,12 @@ class TablePanel extends React.PureComponent {
     }
     fetchGeocode(processedRows)
   }
-  openFileDialog (event) {
-    this.refs.fileUploader.click()
-  }
 
   render() {
-    const { classes } = this.props
-    const hasFile = Boolean(this.state.name && this.state.lastUpdate)
+    const { classes, file } = this.props
+    const hasFile = Boolean(file.name && file.lastUpdate)
     const meta = hasFile
-      ? `${new Date(this.state.lastUpdate).toLocaleString()} - ${this.state.size / 1000} kb`
+      ? `${new Date(file.lastUpdate).toLocaleString()} - ${file.size / 1000} kb`
       : ''
 
     return (
@@ -329,8 +270,8 @@ class TablePanel extends React.PureComponent {
           <CardHeader
             className={classnames(classes.cardHeader)}
             avatar={
-              <Avatar aria-label="File" className={classnames(classes.avatar, !this.state.name && classes.hidden)}>
-                {this.state.name.substr(0, 1)}
+              <Avatar aria-label="File" className={classnames(classes.avatar, !file.name && classes.hidden)}>
+                {file.name.substr(0, 1)}
               </Avatar>
             }
             action={
@@ -339,55 +280,63 @@ class TablePanel extends React.PureComponent {
                   disableFocusListener={true}
                   disableTouchListener={true}
                   title="Open file">
-                  <IconButton
-                    color={hasFile ? 'primary' : 'secondary'}
-                    aria-label="Open file"
-                    disabled={this.props.geocoding}
-                    onClick={this.openFileDialog}>
-                    <OpenIcon />
-                    <input onChange={this.handleFileOpen} type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
-                  </IconButton>
+                  <span>
+                    <IconButton
+                      color={hasFile ? 'primary' : 'secondary'}
+                      aria-label="Open file"
+                      disabled={this.props.geocoding}
+                      onClick={this.openFileDialog}>
+                      <OpenIcon />
+                      <input onChange={this.handleFileOpen} type="file" id="file" ref="fileUploader" style={{display: "none"}}/>
+                    </IconButton>
+                  </span>
                 </Tooltip>
                 <Tooltip
                   disableFocusListener={true}
                   disableTouchListener={true}
                   title="Geocode!">
-                  <IconButton
-                    color="secondary"
-                    disabled={!hasFile}
-                    onClick={this.handleMegaGeocoder}>
-                    {
-                      this.props.geocoding
+                  <span>
+                    <IconButton
+                      color="secondary"
+                      disabled={!hasFile}
+                      onClick={this.handleMegaGeocoder}>
+                      {
+                        this.props.geocoding
                         ? <CircularProgress color="secondary" />
                         : <GeocoderIcon />
-                    }
-                  </IconButton>
+                      }
+                    </IconButton>
+                  </span>
                 </Tooltip>
                 <Tooltip
                   disableFocusListener={true}
                   disableTouchListener={true}
                   title="Save .xlsx">
-                  <IconButton
-                    color={hasFile ? 'primary' : 'default'}
-                    disabled={!hasFile || this.props.geocoding}
-                    onClick={this.handleFileSave}>
-                    <SaveIcon />
-                  </IconButton>
+                  <span>
+                    <IconButton
+                      color={hasFile ? 'primary' : 'default'}
+                      disabled={!hasFile || this.props.geocoding}
+                      onClick={this.handleFileSave}>
+                      <SaveIcon />
+                    </IconButton>
+                  </span>
                 </Tooltip>
                 <Tooltip
                   disableFocusListener={true}
                   disableTouchListener={true}
                   title="Reset">
-                  <IconButton
-                    color="default"
-                    disabled={!hasFile || this.props.geocoding}
-                    onClick={this.handleReset}>
-                    <DeleteIcon />
-                  </IconButton>
+                  <span>
+                    <IconButton
+                      color="default"
+                      disabled={!hasFile || this.props.geocoding}
+                      onClick={this.handleReset}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </span>
                 </Tooltip>
               </React.Fragment>
             }
-            title={this.state.name || 'Open .xlsx file'}
+            title={file.name || 'Open .xlsx file'}
             subheader={meta || 'Yeah, use the red cloudy button. Trust me, I\'m an engineer'}
           />
           {/* <Menu
@@ -401,31 +350,17 @@ class TablePanel extends React.PureComponent {
             <MenuItem onClick={this.handleClose}>Logout</MenuItem>
           </Menu> */}
           <CardContent className={classes.cardContent}>
-            <AddressTable geocode={this.geocodeRow} data={this.state.data} cols={this.state.cols.filter(geocoderColumns)} />
+            <AddressTable data={file.data} cols={file.cols.filter(geocoderColumns)} />
           </CardContent>
           <CardActions className={classes.actions} disableActionSpacing>
             <Button
               href="test.xlsx"
               component="a"
               download="test.xlsx"
-              // onClick={this.handleSampleDownload}
               aria-label="Download sample file">
               Sample file (for testing)
               <AttachmentIcon />
             </Button>
-            {/* <IconButton aria-label="Share">
-              <ShareIcon />
-            </IconButton> */}
-            {/* <IconButton
-              className={classnames(classes.expand, {
-                [classes.expandOpen]: this.state.expanded,
-              })}
-              onClick={this.handleExpandClick}
-              aria-expanded={this.state.expanded}
-              aria-label="Show more"
-            >
-              <ExpandMoreIcon />
-            </IconButton> */}
           </CardActions>
 
         </Card>
@@ -438,10 +373,19 @@ TablePanel.propTypes = {
   classes: PropTypes.object.isRequired,
   apiKey: PropTypes.string,
   geocoding: PropTypes.bool,
-  handleGeocode: PropTypes.func.isRequired,
-  handleMegaGeocode: PropTypes.func.isRequired,
-  handleZoomToGeom: PropTypes.func.isRequired,
-  region: PropTypes.string.isRequired
+  file: PropTypes.object,
 }
 
-export default withStyles(styles)(TablePanel)
+const mapStateToProps = state => {
+  return {
+    file: state.file,
+    apiKey: state.key,
+    geocoding: state.geocoding
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    setFileData: data => dispatch(setFile(data))
+  }
+}
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(TablePanel))

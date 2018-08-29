@@ -6,42 +6,14 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import IconButton from '@material-ui/core/IconButton'
-import GeocodeIcon from '@material-ui/icons/Place'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import AddressRow from './AddressRow'
 
 const styles = theme => ({
   root: {
     width: '100%',
   },
-  table: {
-  }
+  table: { }
 })
-class AddressRow extends React.PureComponent {
-  render () {
-    return (
-      <TableRow>
-        <TableCell numeric padding="dense">{this.props.row.__rowNum__}</TableCell>
-        {
-          this.props.cols.map(c => (
-            <TableCell padding="dense" key={c.key} numeric={(c.name === 'lat' || c.name === 'lon')}>
-              { this.props.row[c.name] }
-            </TableCell>
-          ))
-        }
-        <TableCell padding="dense">
-          <IconButton onClick={() => this.props.geocode(this.props.row)} disabled={this.props.row.isFetching}>
-            {
-              this.props.row.isFetching
-                ? <CircularProgress />
-                : <GeocodeIcon />
-            }
-          </IconButton>
-        </TableCell>
-      </TableRow>
-    )
-  }
-}
 /*
   Simple HTML Table
   usage: <OutTable data={data} cols={cols} />
@@ -75,7 +47,7 @@ class OutTable extends React.Component {
               this.props.data.map((r, i) => {
                 return (
                   <AddressRow
-                    geocode={this.props.geocode}
+                    rowIndex={i}
                     key={r.__rowNum__}
                     cols={this.props.cols}
                     row={r} />

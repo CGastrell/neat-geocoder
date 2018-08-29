@@ -49,22 +49,10 @@ const Layout = props => {
         <div className={props.classes.root}>
           <Grid container spacing={24} className={props.classes.grid}>
             <Grid item xs={6}>
-              <TablePanel
-                apiKey={props.apiKey}
-                region={props.region}
-                geocoding={props.geocoding}
-                handleGeocode={props.handleGeocode}
-                handleMegaGeocode={props.handleMegaGeocode}
-                handleZoomToGeom={props.handleZoomToGeom}
-                className={props.classes.paper}
-              />
+              <TablePanel className={props.classes.paper} />
             </Grid>
             <Grid item xs={6}>
-              <MapPanel
-                geocoding={props.geocoding}
-                mapParams={props.mapParams}
-                className={props.classes.paper}
-                markers={props.markers} />
+              <MapPanel className={props.classes.paper} />
             </Grid>
           </Grid>
         </div>
@@ -74,13 +62,6 @@ const Layout = props => {
 }
 
 Layout.propTypes = {
-  classes: PropTypes.object.isRequired,
-  apiKey: PropTypes.string.isRequired,
-  geocoding: PropTypes.bool.isRequired,
-  handleGeocode: PropTypes.func.isRequired,
-  handleMegaGeocode: PropTypes.func.isRequired,
-  handleZoomToGeom: PropTypes.func.isRequired,
-  mapParams: PropTypes.object.isRequired,
-  markers: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired
 }
 export default withStyles(styles)(Layout)

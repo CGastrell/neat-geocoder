@@ -87,7 +87,7 @@ class MapPanel extends React.PureComponent {
             // subheader={`Results`}
           />
           <CardContent className={classes.cardContent}>
-            <LeMap mapParams={this.props.mapParams} markers={this.props.markers} />
+            <LeMap />
           </CardContent>
           {/* <CardActions className={classes.actions} disableActionSpacing>
             <IconButton aria-label="Add to favorites">
@@ -104,9 +104,7 @@ class MapPanel extends React.PureComponent {
 }
 
 MapPanel.propTypes = {
-  classes: PropTypes.object.isRequired,
-  mapParams: PropTypes.object.isRequired,
-  markers: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired
 }
 
 export default withStyles(styles)(MapPanel)

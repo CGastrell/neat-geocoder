@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import 'leaflet/dist/leaflet.css'
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
+import { connect } from 'react-redux'
+import { receiveGeocode } from '../../actions/file'
 import L from 'leaflet'
 delete L.Icon.Default.prototype._getIconUrl
 
@@ -11,8 +13,32 @@ L.Icon.Default.mergeOptions({
   shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
 })
 
+const FeatureMarker = props => {
+  const { position, address, onDragEnd } = props
+  return (
+    <Marker draggable={true} onDragEnd={onDragEnd} position={position}>
+      <Popup>{address}</Popup>
+    </Marker>
+  )
+}
 // const position = [-35.5, -57]
 class MapPanel extends React.PureComponent {
+  constructor (props) {
+    super(props)
+    this.handleDragEnd = this.handleDragEnd.bind(this)
+  }
+  handleDragEnd (rowIndex) {
+    return event => {
+      console.log(event.target, rowIndex)
+      const geom = {
+        location: {
+          lat: event.target._latlng.lat,
+          lng: event.target._latlng.lng
+        }
+      }
+      this.props.receiveGeocode(null, geom, rowIndex)
+    }
+  }
   render () {
     const params = this.props.mapParams.bounds
       ? {bounds: this.props.mapParams.bounds}
@@ -27,9 +53,11 @@ class MapPanel extends React.PureComponent {
           Object.keys(this.props.markers).map(rowMarker => {
             let marker = this.props.markers[rowMarker]
             return (
-              <Marker key={marker.rowNum} position={marker.position}>
-                <Popup>{marker.address}</Popup>
-              </Marker>
+              <FeatureMarker
+                key={rowMarker}
+                onDragEnd={this.handleDragEnd(marker.rowIndex)}
+                address={marker.address}
+                position={marker.position} />
             )
           })
         }
@@ -43,4 +71,15 @@ MapPanel.propTypes = {
   mapParams: PropTypes.object.isRequired
 }
 
-export default MapPanel
+const mapStateToProps = state => {
+  return {
+    mapParams: state.mapParams,
+    markers: state.markers
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    receiveGeocode: (row, geom, rowIndex) => dispatch(receiveGeocode(row, geom, rowIndex))
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(MapPanel)

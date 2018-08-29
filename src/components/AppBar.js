@@ -101,8 +101,7 @@ class TopBar extends React.PureComponent {
 }
 
 TopBar.propTypes = {
-  classes: PropTypes.object.isRequired,
-  setKey: PropTypes.func.isRequired
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(TopBar);
