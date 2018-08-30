@@ -83,7 +83,7 @@ const sortOnRowNum = (a, b) => {
     return 0
   }
 }
-const serialize = obj => Object.keys(obj).map(i => `${i}=${obj[i]}`).join('&')
+// const serialize = obj => Object.keys(obj).map(i => `${i}=${obj[i]}`).join('&')
 class TablePanel extends React.PureComponent {
   constructor (props) {
     super(props)
