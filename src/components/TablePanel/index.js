@@ -28,8 +28,8 @@ import GeocoderIcon from '@material-ui/icons/Map'
 import Tooltip from '@material-ui/core/Tooltip'
 // import Zoom from '@material-ui/core/Zoom'
 import { connect } from 'react-redux'
-import { setFile } from '../../actions/file'
-
+import { setFile, geocode } from '../../actions/file'
+import { setGeocoding, setIdle } from '../../actions/misc'
 const styles = theme => ({
   root: {
     height: '100%',
@@ -192,7 +192,7 @@ class TablePanel extends React.PureComponent {
     XLSX.writeFile(wb, filename)
   }
   handleReset (event) {
-    this.props.setFileData()
+    this.props.setFileData({})
   }
   // handleExpandClick = () => {
   //   this.setState(state => ({ expanded: !state.expanded }))
@@ -204,54 +204,40 @@ class TablePanel extends React.PureComponent {
   //   this.setState({ anchorEl: null })
   // }
   handleMegaGeocoder (event) {
+    if (this.props.geocoding) return
     if (!this.props.apiKey) {
       alert(`
         I won't do that without an Google Maps API key.
-        You're trying to geocode ${this.state.data.length} entries. You can use the
+        You're trying to geocode ${this.props.file.data.length} entries. You can use the
         button on each row to geocode as Google allows it.
       `)
       return
     }
-    if (this.props.geocoding) return
-    this.props.handleMegaGeocode(true)
+    this.props.setGeocoding()
     // make a queue here, set overall status with the handler from app
     // https://caolan.github.io/async/docs.html#parallelLimit
     let processedRows = 0
     const fetchGeocode = idx => {
-      if (!this.state.data[idx]) {
-        this.props.handleZoomToGeom(false)
-        this.props.handleMegaGeocode(false)
+      if (!this.props.file.data[idx]) {
+        console.log('ended')
+        this.props.setIdle()
+        // this.props.handleZoomToGeom(false)
+        // this.props.handleMegaGeocode(false)
         return
       } else {
-        const row = this.state.data[idx]
+        const row = this.props.file.data[idx]
         processedRows++
 
-        const urlParams = {
-          region: this.props.region,
-          key: this.props.apiKey,
-          address: row.address
-        }
-        const url = `https://maps.googleapis.com/maps/api/geocode/json?${serialize(urlParams)}`
-
-        const data = this.state.data.map(r => {
-          if (r.__rowNum__ === row.__rowNum__) {
-            r.isFetching = true
-          }
-          return r
-        })
-        this.setState({data})
-        fetch(url)
-          .then(response => response.json())
-          .then(json => this.updateRow(row, json))
-          .then(geom => {
-            this.props.handleGeocode(row, geom)
-            this.props.handleZoomToGeom()
+        this.props.geocode(row, this.props.apiKey, idx)
+          .then(action => {
+            // console.log(action)
+            // should zoom to big geom here
             fetchGeocode(processedRows)
           })
           .catch(err => {
-            fetchGeocode(processedRows)
+            console.warn(err)
+            this.props.setIdle()
           })
-
       }
     }
     fetchGeocode(processedRows)
@@ -385,7 +371,10 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => {
   return {
-    setFileData: data => dispatch(setFile(data))
+    setFileData: data => dispatch(setFile(data)),
+    setGeocoding: () => dispatch(setGeocoding()),
+    setIdle: () => dispatch(setIdle()),
+    geocode: (row, key, rowIndex) => dispatch(geocode(row, key, rowIndex))
   }
 }
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(TablePanel))
