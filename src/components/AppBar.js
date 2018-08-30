@@ -39,15 +39,6 @@ class TopBar extends React.PureComponent {
     this.handleKeySave = this.handleKeySave.bind(this)
     this.handleKeyChange = this.handleKeyChange.bind(this)
   }
-  // componentDidMount () {
-  //   if (window && window.localStorage) {
-  //     let key = window.localStorage.getItem('gmapiKey')
-  //     if (key) {
-  //       this.setState({key})
-  //       this.props.setKey(key)
-  //     }
-  //   }
-  // }
   handleKeySave (event) {
     this.props.saveKey(this.props.apiKey)
   }
