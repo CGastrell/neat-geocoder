@@ -60,17 +60,17 @@ export function geocode (row, key = '', rowIndex) {
     const url = `https://maps.googleapis.com/maps/api/geocode/json?${serialize(urlParams)}`
 
 
-    fetch(url)
+    return fetch(url)
       .then(response => response.json())
       .then(json => {
         if (json.status === 'OK' && json.results[0]) {
-          dispatch(receiveGeocode(row, json.results[0].geometry, rowIndex))
+          return dispatch(receiveGeocode(row, json.results[0].geometry, rowIndex))
         } else {
           throw new Error(json.status)
         }
       })
       .catch(err => {
-        dispatch(errorGeocode(row, rowIndex))
+        return dispatch(errorGeocode(row, rowIndex))
       })
   }
 }
