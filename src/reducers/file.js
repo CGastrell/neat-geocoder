@@ -12,7 +12,7 @@ export default (state = defaultState.file, action) => {
   switch (action.type) {
     case FILE_SET:
       return {
-        ...state,
+        ...defaultState.file,
         ...action.file
       }
     case GEOCODE_ERROR:
