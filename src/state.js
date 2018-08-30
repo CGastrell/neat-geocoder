@@ -1,10 +1,17 @@
+let key = ''
+try {
+  key = window.localStorage.getItem('gmapiKey')
+} catch (err) {
+  // go silently
+  key = ''
+}
 export default {
   markers: {},
   mapParams: {
     center: [-35.5, -57],
     bounds: false
   },
-  key: '',
+  key: key,
   file: {
     name: '',
     lastUpdate: '',
