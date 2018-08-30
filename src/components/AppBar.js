@@ -12,7 +12,8 @@ import Input from '@material-ui/core/Input'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import InputLabel from '@material-ui/core/InputLabel'
 import classNames from 'classnames'
-
+import { connect } from 'react-redux'
+import { setKey, saveKey } from '../actions/misc'
 const styles = {
   root: {
     // flexGrow: 1,
@@ -35,29 +36,23 @@ const styles = {
 class TopBar extends React.PureComponent {
   constructor (props) {
     super(props)
-    this.state = { key: '' }
     this.handleKeySave = this.handleKeySave.bind(this)
     this.handleKeyChange = this.handleKeyChange.bind(this)
   }
-  componentDidMount () {
-    if (window && window.localStorage) {
-      let key = window.localStorage.getItem('gmapiKey')
-      if (key) {
-        this.setState({key})
-        this.props.setKey(key)
-      }
-    }
-  }
+  // componentDidMount () {
+  //   if (window && window.localStorage) {
+  //     let key = window.localStorage.getItem('gmapiKey')
+  //     if (key) {
+  //       this.setState({key})
+  //       this.props.setKey(key)
+  //     }
+  //   }
+  // }
   handleKeySave (event) {
-    if (window && window.localStorage) {
-      window.localStorage.setItem('gmapiKey', this.state.key)
-    }
-    this.props.setKey(this.state.key)
+    this.props.saveKey(this.props.apiKey)
   }
   handleKeyChange (event) {
-    this.setState({
-      key: event.target.value
-    })
+    this.props.setKey(event.target.value)
   }
   render () {
     const { classes } = this.props;
@@ -77,7 +72,7 @@ class TopBar extends React.PureComponent {
                 className={classes.formcontrol}
                 id="adornment-password"
                 type="text"
-                value={this.state.key}
+                defaultValue={this.props.apiKey}
                 onChange={this.handleKeyChange}
                 endAdornment={
                   <InputAdornment position="end">
@@ -101,7 +96,18 @@ class TopBar extends React.PureComponent {
 }
 
 TopBar.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  apiKey: PropTypes.string
 };
-
-export default withStyles(styles)(TopBar);
+const mapStateToProps = state => {
+  return {
+    apiKey: state.key
+  }
+}
+const mapDispatchToProps = dispatch => {
+  return {
+    setKey: key => dispatch(setKey(key)),
+    saveKey: key => dispatch(saveKey(key))
+  }
+}
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(TopBar))
