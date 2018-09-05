@@ -7,7 +7,7 @@ import defaultState from '../state'
 export default (state = defaultState.markers, action) => {
   switch (action.type) {
     case GEOCODE_RECEIVE:
-      if (!action.row) return state
+      if (!action.row || !action.geom) return state
       let { row, geom, rowIndex } = action
       let markers = {...state}
       markers[row.__rowNum__] = {
