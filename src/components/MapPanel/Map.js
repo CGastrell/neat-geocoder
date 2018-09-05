@@ -14,10 +14,10 @@ L.Icon.Default.mergeOptions({
 })
 
 const FeatureMarker = props => {
-  const { position, address, onDragEnd } = props
+  const { rowNum, position, address, onDragEnd } = props
   return (
     <Marker draggable={true} onDragEnd={onDragEnd} position={position}>
-      <Popup>{address}</Popup>
+      <Popup>#{rowNum} - {address}</Popup>
     </Marker>
   )
 }
@@ -54,6 +54,7 @@ class MapPanel extends React.PureComponent {
             return (
               <FeatureMarker
                 key={rowMarker}
+                rowNum={rowMarker}
                 onDragEnd={this.handleDragEnd(marker.rowIndex)}
                 address={marker.address}
                 position={marker.position} />
