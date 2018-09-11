@@ -77,7 +77,8 @@ class AddressRow extends React.PureComponent {
             style={{padding: '8px', fontSize: '13px', border: 0, width: '100%', textAlign: 'right'}}
             step="0.00001"
             type="number"
-            defaultValue={this.props.row[col]}
+            value={this.props.row[col] || ''}
+            // defaultValue={this.props.row[col]}
           />
         )
       default: return this.props.row[col]
