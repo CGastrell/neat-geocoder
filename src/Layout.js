@@ -48,7 +48,7 @@ const Layout = props => {
       <div className={props.classes.ultraroot}>
         <div className={props.classes.root}>
           <Grid container spacing={24} className={props.classes.grid}>
-            <Grid item xs={7}>
+            <Grid item xs={7} style={{height: '100%'}}>
               <TablePanel className={props.classes.paper} />
             </Grid>
             <Grid item xs={5}>
